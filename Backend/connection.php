@@ -1,9 +1,12 @@
 <?php
 
 $host = "localhost";
-$dbuser ="";
+$dbuser ="root";
 $pass = "";
 $dbname = "mydb";
+include ("Jwt.php");
+$secretKey = 'HammoudHabibiHammoud';
+$jwtManager = new JwtManager($secretKey);
 
 $connection = mysqli_connect($host, $dbuser, $pass, $dbname);
 
