@@ -30,7 +30,6 @@ if (isset($_GET["assignment_id"])) {
 
     if ($sql->execute()) {
         $result = $sql->get_result();
-        $comments = [];
 
         while ($row = $result->fetch_assoc()) {
             $comments[] = $row;
