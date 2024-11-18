@@ -11,7 +11,7 @@ if (!isset($userData['role'])) {
 
 if ($userData["role"] == "student") {
     $private= 0;
-}else{
+}else{  
     $private= 1;
 }
 
@@ -21,7 +21,7 @@ if (isset($_GET["assignment_id"])) {
     $assignment_id = $_GET['assignment_id'];
     $sql = $connection->prepare("
         SELECT 
-        comments.student_id, students.username, comments.content, comments.date 
+        comments.student_id, users.username, comments.content, comments.date 
         FROM  comments JOIN users  ON 
         comments.student_id = users.user_id 
         WHERE comments.private = ? AND comments.assignment_id = ?");
@@ -45,4 +45,3 @@ if (isset($_GET["assignment_id"])) {
     http_response_code(400);
     echo json_encode(["error" => "Invalid input"]);
 }
-
