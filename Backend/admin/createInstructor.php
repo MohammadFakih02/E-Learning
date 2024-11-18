@@ -1,6 +1,6 @@
 <?php
 
-include("connection.php");
+include("../connection.php");
 
 $userData= $jwtManager->checkToken();
 $data = json_decode(file_get_contents("php://input"), true);
