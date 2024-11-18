@@ -6,7 +6,7 @@ $userData = $jwtManager->checkToken();
 
 if (!isset($userData['role']) || $userData['role'] !== 'instructor') {
     http_response_code(403);
-    echo json_encode(["error" => "Access denied: Admins only"]);
+    echo json_encode(["error" => "Access denied: Instructors only"]);
     exit;
 }
 
