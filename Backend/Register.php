@@ -55,11 +55,15 @@ function check_password($password)
 {
     if (strlen($password) < 12) {
         echo 'Password must be longer than 12 characters';
+        exit;
     } else if (!preg_match('/[A-Z]/', $password)) {
         echo 'Password must contain at least one uppercase letter';
+        exit;
     } else if (!preg_match('/[a-z]/', $password)) {
         echo 'Password must contain at least one lowercase letter';
+        exit;
     } else if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
         echo 'Password must contain at least one special character';
+        exit;
     }
 }

@@ -20,18 +20,17 @@ if (isset($data['email']) && isset($data['password'])) {
                 "success" => false,
                 "message" => "This account has been banned."
             ]);
-            exit();
+            exit;
         }
-        $role = $user["role"];
+        
         $payload = [
             "user_id" => $user["user_id"],
-            "email" => $user["email"],
+            "role" => $user["role"],    
         ];
         if (password_verify($password, $user['password'])) {
             $token = $jwtManager->createToken($payload);
             echo json_encode([
                 "token" => $token,
-                "role" => $role,
             ]);
         } else {
             echo json_encode([
