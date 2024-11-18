@@ -17,21 +17,32 @@ if ($userData["role"] == "student") {
 
 $comments = [];
 
-if(isset($_GET["assignment_id"])){
-$assignment_id=$_GET['assignment_id'];
-$sql = $connection->prepare("SELECT student_id,content,date from comments where private=$private and assignment_id=?");
-$sql->bind_param("i",$assignment_id);
-if($sql->execute()){
-    $result = $sql->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $comments[] = $row;
+if (isset($_GET["assignment_id"])) {
+    $assignment_id = $_GET['assignment_id'];
+    $sql = $connection->prepare("
+        SELECT 
+        comments.student_id, students.username, comments.content, comments.date 
+        FROM  comments JOIN users  ON 
+        comments.student_id = users.user_id 
+        WHERE comments.private = ? AND comments.assignment_id = ?");
+
+    $sql->bind_param("ii", $private, $assignment_id);
+
+    if ($sql->execute()) {
+        $result = $sql->get_result();
+        $comments = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $comments[] = $row;
+        }
+
+        echo json_encode(["success" => true, "data" => $comments]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["error" => "Unable to access database"]);
     }
-    echo json_encode(["success" => true, "data" => $response]);
-}else{
-    http_response_code(500);
-    echo json_encode(["error"=>"unable to access database"]);
-}
-}else{
+} else {
     http_response_code(400);
-    echo json_encode(["error"=> "invalid input"]);
+    echo json_encode(["error" => "Invalid input"]);
 }
+
