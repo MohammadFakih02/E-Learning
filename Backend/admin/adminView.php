@@ -10,69 +10,44 @@ if (!isset($userData['role']) || $userData['role'] !== 'admin') {
     exit;
 }
 
-$students = [];
-$instructors = [];
-$admins = [];
+$users = [];
 $courses = [];
 
+$sql = "
+    SELECT 'student' AS category, user_id, username, role, is_banned FROM users WHERE role = 'student'
+    UNION ALL
+    SELECT 'instructor' AS category, user_id, username, role, is_banned FROM users WHERE role = 'instructor'
+    UNION ALL
+    SELECT 'admin' AS category, user_id, username, role, is_banned FROM users WHERE role = 'admin';
+    
+    SELECT * FROM courses;
+";
 
-$sql = $connection->prepare("SELECT user_id, username, role, is_banned FROM users WHERE role = 'student'");
-if ($sql->execute()) {
-    $result = $sql->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $students[] = $row;
-    }
+if ($connection->multi_query($sql)) {
+    do {
+        if ($result = $connection->store_result()) {
+            while ($row = $result->fetch_assoc()) {
+                if (isset($row['category'])) {
+                    $users[$row['category']][] = $row;
+                } else {
+                    $courses[] = $row;
+                }
+            }
+            $result->free();
+        }
+    } while ($connection->next_result());
 } else {
     http_response_code(500);
-    echo json_encode(["error" => "Database error while fetching students"]);
-    exit;
-}
-
-
-$sql = $connection->prepare("SELECT user_id, username, role, is_banned FROM users WHERE role = 'instructor'");
-if ($sql->execute()) {
-    $result = $sql->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $instructors[] = $row;
-    }
-} else {
-    http_response_code(500);
-    echo json_encode(["error" => "Database error while fetching instructors"]);
-    exit;
-}
-
-
-$sql = $connection->prepare("SELECT user_id, username, role, is_banned FROM users WHERE role = 'admin'");
-if ($sql->execute()) {
-    $result = $sql->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $admins[] = $row;
-    }
-} else {
-    http_response_code(500);
-    echo json_encode(["error" => "Database error while fetching admins"]);
-    exit;
-}
-
-$sql = $connection->prepare("SELECT * FROM courses");
-if ($sql->execute()) {
-    $result = $sql->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $courses[] = $row;
-    }
-} else {
-    http_response_code(500);
-    echo json_encode(["error" => "Database error while fetching courses"]);
+    echo json_encode(["error" => "Database error while fetching data"]);
     exit;
 }
 
 $response = [
-    "students" => $students,
-    "instructors" => $instructors,
-    "admins" => $admins,
+    "students" => $users['student'] ?? [],
+    "instructors" => $users['instructor'] ?? [],
+    "admins" => $users['admin'] ?? [],
     "courses" => $courses
 ];
 
 header('Content-Type: application/json');
 echo json_encode(["success" => true, "data" => $response]);
-
