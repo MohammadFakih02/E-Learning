@@ -33,15 +33,17 @@ if (isset($data['email']) && isset($data['password'])) {
                 "token" => $token,
             ]);
         } else {
+            http_response_code(400);
             echo json_encode([
                 "success" => false,
-                "message" => "Invalid password."
+                "message" => "Invalid Credentials."
             ]);
         }
     } else {
+        http_response_code(400);
         echo json_encode([
             "success" => false,
-            "message" => "User not found."
+            "message" => "Invalid Credentials."
         ]);
     }
 } else {

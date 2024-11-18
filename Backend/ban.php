@@ -25,9 +25,11 @@ if ($sql->execute()) {
     if ($sql->affected_rows > 0) {
         echo json_encode(["success" => true, "message" => "User has been banned."]);
     } else {
+        http_response_code(404);
         echo json_encode(["success" => false, "message" => "No user found with the given user_id."]);
     }
 } else {
+    http_response_code(500);
     echo json_encode(["success" => false, "message" => "Query execution failed"]);
 }
 
