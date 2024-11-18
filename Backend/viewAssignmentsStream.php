@@ -9,17 +9,18 @@ if (!isset($userData['role'])) {
     exit;
 }
 
-$announcements = [];
+$assignments = [];
 
 
-$sql = $connection->prepare("SELECT announcements.announcement_id,users.username,announcements.content,announcements.title,announcements.date
-                                    FROM users JOIN announcements on users.user_id = announcements.instructor_id");
+$sql = $connection->prepare("SELECT assignments.assignment_id,users.username,assignments.title,
+                                    assignments.created_at,assignments.deadline 
+                                    FROM users JOIN assignmenets on users.user_id = assignments.instructor_id");
 
 if ($sql->execute()) {
     $result = $sql->get_result();
 
     while ($row = $result->fetch_assoc()) {
-        $announcements[] = $row;
+        $assignments[] = $row;
     }
 
     echo json_encode(["success" => true, "data" => $announcements]);
