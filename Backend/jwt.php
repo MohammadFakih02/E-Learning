@@ -54,9 +54,16 @@ class JwtManager
             echo json_encode(["error" => "Authorization header missing"]);
             exit;
         }
+        $tokenParts = explode(' ', $authHeader);
+        if (count($tokenParts) !== 2 || $tokenParts[0] !== 'Bearer') {
+            http_response_code(400);
+            echo json_encode(["error" => "Invalid Authorization header format"]);
+            exit;
+        }
 
-        $token = $authHeader;
+        $token = $tokenParts[1];
 
+        // Validate the token
         if (!$this->validateToken($token)) {
             http_response_code(401);
             echo json_encode(["error" => "Invalid or expired token"]);
