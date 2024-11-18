@@ -33,7 +33,7 @@ if(isset($data["course_name"])){
     $sql= $connection->prepare("INSERT INTO courses (course_name) values (?)");
     $sql->bind_param("s", $course_name);
     if ($sql->execute()) {
-        echo "success";
+        echo json_encode(["message"=> "added new course"]);
     } else {
         http_response_code(500);
         echo json_encode(["error"=> "Unable to create course"]);

@@ -20,7 +20,7 @@ if (isset($data["username"]) && $data["password"] && $data["email"]&& isset($dat
 
     $sql = $connection->prepare('INSERT Into user_courses (user_id,course_id) values ($user_id,$course_id)');
     if( $sql->execute() ){
-        echo ("Instructor created successfully");
+        echo json_encode(["message"=> "added new instructor"]);
     }else{
         http_response_code(500);
         echo json_encode(['error'=> 'Database error']);

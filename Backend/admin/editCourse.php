@@ -18,7 +18,7 @@ if(isset($data["course_id"])&&isset($data["course_name"])){
     $sql= $connection->prepare("Update courses Set course_name = ? where course_id = ?");
     $sql->bind_param("is", $course_id,$course_name);
     if ($sql->execute()) {
-        echo "success";
+        echo json_encode(["message"=> "successfully edited course"]);
     } else {
         http_response_code(500);
         echo json_encode(["error"=> "Unable to edit course"]);

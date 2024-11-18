@@ -18,7 +18,7 @@ if(isset($data["course_name"])){
     $sql= $connection->prepare("Delete from courses where course_id=?");
     $sql->bind_param("s", $course_id);
     if ($sql->execute()) {
-        echo "success";
+        echo json_encode(["message"=> "deleted course"]);
     } else {
         http_response_code(500);
         echo json_encode(["error"=> "Unable to create course"]);

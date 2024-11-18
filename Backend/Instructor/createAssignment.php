@@ -23,7 +23,7 @@ if (isset($data["course_id"])&& isset($data["content"])&& isset($data["title"])&
     $sql =$connection->prepare("INSERT INTO assignments (course_id,instructor_id,content,title,created_at,deadline) values (?,?,?,?,?,?");
     $sql->bind_param("i,i,s,s,s,s",$course_id,$instructor_id,$content,$title,$date);
     if( $sql->execute()){
-        echo "created new assignment";
+        echo json_encode(["message"=> "added new assignment"]);
     }else{
         http_response_code(500);
         echo json_encode(["error"=> "unable to access database"]);
