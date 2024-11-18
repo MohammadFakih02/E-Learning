@@ -1,6 +1,6 @@
 <?php
 
-include("connection.php");
+include("connection.php"); 
 
 $userData = $jwtManager->checkToken();
 if (!isset($userData['role']) || $userData['role'] !== 'student') {
@@ -27,22 +27,23 @@ if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
 }
 
 $metaData = json_decode($_POST['metaData'], true);
-$content = $_POST['content'] ?? ''; 
-$userId = $userData['user_id'];
+$content = $_POST['content'] ?? '';
+$userId = $userData['user_id']; 
 
-try {
-    $stmt = $pdo->prepare("
+    $sql = $mysqli->prepare("
         INSERT INTO submissions (user_id, file_name, file_path, content, created_at)
-        VALUES (:user_id, :file_name, :file_path, :content, NOW())
+        VALUES (?, ?, ?, ?, NOW())
     ");
-    $stmt->execute([
-        ':user_id' => $userId,
-        ':file_name' => $fileName,
-        ':file_path' => $filePath,
-        ':content' => $content,
-    ]);
+    $sql->bind_param("isss", $userId, $fileName, $filePath, $content);
+
+    if ($sql->execute()) {
+
 
     echo json_encode(['status' => 'success', 'message' => 'Submission saved successfully.']);
-} catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
+
+    $sql->close();
+} else {
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'database error']);
 }
+$mysqli->close();
