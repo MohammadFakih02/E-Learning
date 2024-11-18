@@ -18,7 +18,7 @@ if (isset($data["username"]) && $data["password"] && $data["email"]&& isset($dat
     $email = $data['email'];
     $course_id = $data['course_id'];
 
-    $sql = $connection->prepare('INSERT Into courses (user_id,course_id) values ($user_id,$course_id)');
+    $sql = $connection->prepare('INSERT Into user_courses (user_id,course_id) values ($user_id,$course_id)');
     if( $sql->execute() ){
         echo ("Instructor created successfully");
     }else{
