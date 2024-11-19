@@ -1,12 +1,8 @@
 import React from "react";
-import "../../styles/Button.css";
 
-const Button = ({ text, onClick, bgColor }) => {
-  return (
-    <button className="base-button" onClick={() => onClick()}>
-      {text}
-    </button>
-  );
-};
-
+const Button = ({text,onClick, bgColor})=>{
+    return (
+        <button className="base-button" onclick={()=>onClick}>{text}</button>
+    );
+}
 export default Button;
