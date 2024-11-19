@@ -1,6 +1,5 @@
 import axios from "axios";
-
-axios.defaults.baseURL = "http://localhost/backend";
+axios.defaults.baseURL = "http://localhost/elearning/backend";
 // axios.defaults.headers.Authorization = localStorage.token
 
 export const requestApi = async ({ route, method = "GET", body }) => {
