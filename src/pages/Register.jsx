@@ -4,15 +4,21 @@ import Input from "../components/Input";
 import { requestApi } from "../utils/request";
 import { requestMethods } from "../utils/enums/requestMethods";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from 'jwt-decode';
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errormessage, setErrormessage] = useState("");
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Register</h1>
+      <Input
+        placeholder={"username"}
+        onChange={(e) => {
+          setUsername(e.target.value);
+        }}
+      />
       <Input
         placeholder={"email"}
         onChange={(e) => {
@@ -31,24 +37,14 @@ const Login = () => {
           try {
             const result = await requestApi({
               body: {
+                username,
                 email,
                 password,
               },
               method: requestMethods.POST,
-              route: "/login",
+              route: "/register",
             });
-
-            const decoded = jwtDecode(result.token);
-            const role = decoded.role;
-            console.log(role);
-            if (role === "admin") {
-              navigate("/admin");
-            } else if (role === "instructor") {
-              navigate("/instructor");
-            } else {
-              navigate("/student");
-            }
-
+            navigate("/");
             setErrormessage("");
             console.log(result);
           } catch (error) {
@@ -57,15 +53,8 @@ const Login = () => {
         }}
       />
       <p>{errormessage}</p>
-      <p className="link"
-        onClick={() => {
-          navigate("/register");
-        }}
-      >
-        Don't have an account? Register
-      </p>
     </div>
   );
 };
 
-export default Login;
+export default Register;

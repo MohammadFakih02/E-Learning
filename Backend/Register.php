@@ -1,7 +1,10 @@
 <?php
 
 include("connection.php");
-
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (isset($data["username"]) && $data["password"] && $data["email"]) {
@@ -54,16 +57,32 @@ if (isset($data["username"]) && $data["password"] && $data["email"]) {
 function check_password($password)
 {
     if (strlen($password) < 12) {
-        echo 'Password must be longer than 12 characters';
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Password must be longer than 12 characters'
+        ]);
         exit;
     } else if (!preg_match('/[A-Z]/', $password)) {
-        echo 'Password must contain at least one uppercase letter';
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'password must contain at least one upercase letter'
+        ]);
         exit;
     } else if (!preg_match('/[a-z]/', $password)) {
-        echo 'Password must contain at least one lowercase letter';
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'password must contain at least one lowercase letter'
+        ]);
         exit;
     } else if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
-        echo 'Password must contain at least one special character';
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'password must contain at least one special character'
+        ]);
         exit;
     }
 }
