@@ -26,7 +26,6 @@ if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
     }
 }
 
-$metaData = json_decode($_POST['metaData'], true);
 $content = $_POST['content'] ?? '';
 $userId = $userData['user_id']; 
 
