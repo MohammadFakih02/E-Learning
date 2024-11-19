@@ -16,10 +16,6 @@ export const requestApi = async ({ route, method = "GET", body }) => {
 
     return response.data;
   } catch (error) {
-    console.log("======== Error =========");
-    console.log(error.response.data.message);
-    console.log("======== // =========");
-
     throw error;
   }
 };
