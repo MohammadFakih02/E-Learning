@@ -8,12 +8,17 @@ if (!isset($userData['role'])) {
     echo json_encode(["error" => "Access denied: not logged in"]);
     exit;
 }
+if(!isset($_GET['course_id'])){
+    http_response_code(400);
+    echo json_encode(['error'=> 'invalid course']);
+}
 
+$course_id= $_GET("course_id");
 $announcements = [];
 
 
-$sql = $connection->prepare("SELECT announcements.announcement_id,users.username,announcements.content,announcements.title,announcements.date
-                                    FROM users JOIN announcements on users.user_id = announcements.instructor_id");
+$sql = $connection->prepare("SELECT announcements.announcement_id,users.username,announcements.content,announcements.title,
+                                    announcements.date FROM users JOIN announcements on users.user_id = announcements.instructor_id");
 
 if ($sql->execute()) {
     $result = $sql->get_result();

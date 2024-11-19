@@ -9,12 +9,20 @@ if (!isset($userData['role'])) {
     exit;
 }
 
+if(!isset($_GET['course_id'])){
+    http_response_code(400);
+    echo json_encode(['error'=> 'invalid course']);
+}
+
+$course_id= $_GET("course_id");
 $assignments = [];
 
 
 $sql = $connection->prepare("SELECT assignments.assignment_id,users.username,assignments.title,
                                     assignments.created_at,assignments.deadline 
-                                    FROM users JOIN assignmenets on users.user_id = assignments.instructor_id");
+                                    FROM users JOIN assignmenets on users.user_id = assignments.instructor_id where course_id = ?");
+
+$sql->bind_param("i", $course_id);
 
 if ($sql->execute()) {
     $result = $sql->get_result();
