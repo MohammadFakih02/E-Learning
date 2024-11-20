@@ -27,8 +27,11 @@ const Assignment = () => {
   const [content, setContent] = useState("");
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile); // Set the selected file in state
+    console.log('Selected file:', selectedFile); // Debugging log to check the file selected
   };
+  
 
   const handleContentChange = (e) => {
     setContent(e.target.value);
@@ -36,21 +39,31 @@ const Assignment = () => {
 
   const handleSubmit = async () => {
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("content", content);
-
+  
+    // Check if the file is not null or undefined
+    if (file) {
+      console.log('Appending file:', file); // Debugging log
+      formData.append("file", file);
+    } else {
+      console.log('No file selected');
+    }
+  
+    formData.append("content", content); // Append content as well
+  
     try {
       const result = await requestApi({
         body: formData,
         method: requestMethods.POST,
         route: `/student/submitAssignment.php?ass=${assignment_id}`,
-        isMultipart: true, 
+        isMultipart: true, // Ensure this flag is set for multipart/form-data
       });
-      console.log(result);
+      console.log(result); // Log the response
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error.response ? error.response.data.message : error.message);
     }
   };
+  
+  
 
   return (
     <>
