@@ -1,5 +1,4 @@
 import { requestApi } from "../utils/request";
-import { requestMethods } from "../utils/enums/requestMethods";
 import { useState } from "react";
 
 const AnnouncementStream = () => {
@@ -11,7 +10,9 @@ const AnnouncementStream = () => {
         route: `/viewAnnouncementsStream?course_id=${course_id}`,
       });
       setAnnouncements(data);
-    } catch {}
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {

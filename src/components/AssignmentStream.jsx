@@ -1,5 +1,4 @@
 import { requestApi } from "../utils/request";
-import { requestMethods } from "../utils/enums/requestMethods";
 import { useState } from "react";
 
 const assignmentStream = () => {
@@ -11,7 +10,9 @@ const assignmentStream = () => {
         route: `/viewAssignmentsStream?course_id=${course_id}`,
       });
       setAssignments(data);
-    } catch {}
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
