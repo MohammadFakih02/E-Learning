@@ -8,10 +8,11 @@ if (!isset($userData['role'])) {
     echo json_encode(["error" => "Access denied: not logged in"]);
     exit;
 }
-
+$user_id=$userData["user_id"];
 $courses = [];
 
-$sql = $connection->prepare("Select * from courses");
+$sql = $connection->prepare("Select courses.course_id,courses.course_name from courses join user_courses on user_courses.course_id = courses.course_id where user_courses.user_id!=?");
+$sql->bind_param("i", $user_id);
 if($sql->execute()){
     $result = $sql->get_result();
     while ($row = $result->fetch_assoc()) {
