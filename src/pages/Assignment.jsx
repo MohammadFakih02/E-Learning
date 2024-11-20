@@ -4,9 +4,15 @@ import { requestApi } from "../utils/request";
 import { requestMethods } from "../utils/enums/requestMethods";
 import Input from '../components/Input';
 import Button from "../components/Button";
+
 const Assignment = () => {
   const { assignment_id } = useParams();
   const [assignment, setAssignment] = useState({});
+  const [file, setFile] = useState(null);
+  const [content, setContent] = useState("");
+  const [commentContent, setCommentContent] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [comments, setComments] = useState([]);
 
   const getAssignment = async () => {
     try {
@@ -19,51 +25,90 @@ const Assignment = () => {
     }
   };
 
+  const getComments = async () => {
+    try {
+      const result = await requestApi({
+        route: `/viewComments.php?assignment_id=${assignment_id}`,
+      });
+      setComments(result.data);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
   useEffect(() => {
     getAssignment();
+    getComments();
   }, [assignment_id]);
-
-  const [file, setFile] = useState(null);
-  const [content, setContent] = useState("");
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile); // Set the selected file in state
-    console.log('Selected file:', selectedFile); // Debugging log to check the file selected
+    setFile(selectedFile);
+    console.log('Selected file:', selectedFile);
   };
-  
 
   const handleContentChange = (e) => {
     setContent(e.target.value);
   };
 
+  const handleCommentChange = (e) => {
+    setCommentContent(e.target.value);
+  };
+
+  const handlePrivateChange = (e) => {
+    setIsPrivate(e.target.checked);
+  };
+
   const handleSubmit = async () => {
     const formData = new FormData();
-  
-    // Check if the file is not null or undefined
+
     if (file) {
-      console.log('Appending file:', file); // Debugging log
+      console.log('Appending file:', file);
       formData.append("file", file);
     } else {
       console.log('No file selected');
     }
-  
-    formData.append("content", content); // Append content as well
-  
+
+    formData.append("content", content);
+
     try {
       const result = await requestApi({
         body: formData,
         method: requestMethods.POST,
         route: `/student/submitAssignment.php?ass=${assignment_id}`,
-        isMultipart: true, // Ensure this flag is set for multipart/form-data
+        isMultipart: true,
       });
-      console.log(result); // Log the response
+      console.log(result);
     } catch (error) {
       console.log(error.response ? error.response.data.message : error.message);
     }
   };
-  
-  
+
+  const handleCommentSubmit = async () => {
+    if (!commentContent) {
+      return;
+    }
+
+    const data = {
+      assignment_id,
+      content: commentContent,
+      private: isPrivate ? 1 : 0, 
+    };
+
+    try {
+      const result = await requestApi({
+        body: JSON.stringify(data),
+        method: requestMethods.POST,
+        route: "/student/Comment.php",
+      });
+      console.log(result);
+      setCommentContent("");
+      setIsPrivate(false);
+      getComments();
+    } catch (error) {
+      console.log(error.response ? error.response.data.message : error.message);
+    }
+  };
 
   return (
     <>
@@ -94,6 +139,47 @@ const Assignment = () => {
         />
 
         <Button text={"Upload File"} onClick={handleSubmit} />
+      </div>
+
+      <div>
+        <h1>Post a Comment</h1>
+
+        <Input
+          placeholder={"Write your comment here..."}
+          value={commentContent}
+          onChange={handleCommentChange}
+        />
+
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              checked={isPrivate}
+              onChange={handlePrivateChange}
+            />
+            Mark as Private
+          </label>
+        </div>
+
+        <Button text={"Post Comment"} onClick={handleCommentSubmit} />
+      </div>
+
+      <div>
+        <h1>Comments</h1>
+        <div>
+          {comments.length > 0 ? (
+            comments.map((comment, index) => (
+              <div key={index} className="comment-card">
+                <p><strong>{comment.username}</strong> says:</p>
+                <p>{comment.content}</p>
+                <p><i>{comment.date}</i></p>
+                {comment.private && <span style={{ color: 'red' }}>Private</span>}
+              </div>
+            ))
+          ) : (
+            <p>No comments yet.</p>
+          )}
+        </div>
       </div>
     </>
   );
