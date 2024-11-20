@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Courses from './pages/Courses';
 import { BrowserRouter ,Routes, Route } from "react-router-dom";
 import Streams from './pages/Streams';
+import Assignment from './pages/Assignment';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path='/courses' element={<Courses />} />
         <Route path="/streams/:courseId" element={<Streams />} />
+        <Route path="/assignment/:assignment_id" element={<Assignment />}/>
       </Routes>
       </BrowserRouter>
     </div>

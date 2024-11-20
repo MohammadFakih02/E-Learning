@@ -1,6 +1,12 @@
 <?php
 
-include("connection.php"); 
+include("../connection.php"); 
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    // Allow the preflight request
+    http_response_code(200);
+    exit();
+}
 
 $userData = $jwtManager->checkToken();
 if (!isset($userData['role']) || $userData['role'] !== 'student') {
@@ -9,6 +15,7 @@ if (!isset($userData['role']) || $userData['role'] !== 'student') {
     exit;
 }
 
+$assignment_id = $_GET["ass"];
 $fileName = null;
 $filePath = null;
 
@@ -29,20 +36,19 @@ if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
 $content = $_POST['content'] ?? '';
 $userId = $userData['user_id']; 
 
-    $sql = $mysqli->prepare("
-        INSERT INTO submissions (user_id, file_name, file_path, content, created_at)
-        VALUES (?, ?, ?, ?, NOW())
-    ");
-    $sql->bind_param("isss", $userId, $fileName, $filePath, $content);
+// Use REPLACE INTO to replace the record if it already exists for this student and assignment
+$sql = $connection->prepare("
+    REPLACE INTO submissions (student_id, file_name, file_path, content, assignment_id)
+    VALUES (?, ?, ?, ?, ?)
+");
+$sql->bind_param("isssi", $userId, $fileName, $filePath, $content, $assignment_id);
 
-    if ($sql->execute()) {
-
-
+if ($sql->execute()) {
     echo json_encode(['status' => 'success', 'message' => 'Submission saved successfully.']);
-
     $sql->close();
 } else {
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'database error']);
+    echo json_encode(['status' => 'error', 'message' => 'Database error']);
 }
-$mysqli->close();
+
+$connection->close();
