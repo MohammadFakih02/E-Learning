@@ -13,7 +13,7 @@ if(!isset($_GET['course_id'])){
     echo json_encode(['error'=> 'invalid course']);
 }
 
-$course_id= $_GET("course_id");
+$course_id= $_GET["course_id"];
 $announcements = [];
 
 
