@@ -1,10 +1,10 @@
 import { requestApi } from "../utils/request";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
-const AnnouncementStream = () => {
+const AnnouncementStream = ({course_id}) => {
     const [announcements,setAnnouncements] = useState([]);
     
-  getAnnouncements = async () => {
+  const getAnnouncements = async () => {
     try {
       const result = await requestApi({
         route: `/viewAnnouncementsStream.php?course_id=${course_id}`,
@@ -34,3 +34,4 @@ const AnnouncementStream = () => {
     </div>
   );
 };
+export default AnnouncementStream;

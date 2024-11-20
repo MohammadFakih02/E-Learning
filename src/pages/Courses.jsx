@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { requestApi } from "../utils/request";
 import CourseList from "../components/CourseList";
-
+import { useNavigate } from "react-router-dom";
 const Courses = () => {
+  const navigate = useNavigate();
   const [myCourses, setMyCourses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);
 
@@ -40,9 +41,13 @@ const Courses = () => {
     fetchCourses();
   }, []);
 
+  const handleCourseClick = (courseId) => {
+    navigate(`/streams/${courseId}`);
+  };
+
   return (
     <div>
-      <CourseList url="/viewMyCourses" courses={myCourses} onEnroll={null}/>
+      <CourseList url="/viewMyCourses" courses={myCourses} onEnroll={null} onClick={handleCourseClick}/>
       <CourseList url="/viewCourses" courses={allCourses} onEnroll={handleEnroll} />
     </div>
   );

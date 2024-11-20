@@ -1,10 +1,10 @@
 import { requestApi } from "../utils/request";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
-const assignmentStream = () => {
+const AssignmentStream = ({course_id}) => {
     const [assignments,setAssignments] = useState([]);
     
-  getassignments = async () => {
+  const getAssignments = async () => {
     try {
       const result = await requestApi({
         route: `/viewAssignmentsStream.php?course_id=${course_id}`,
@@ -16,7 +16,7 @@ const assignmentStream = () => {
   };
 
   useEffect(() => {
-    getAssignmnets();
+    getAssignments();
   }, []);
 
   return (
@@ -34,3 +34,4 @@ const assignmentStream = () => {
     </div>
   );
 };
+export default AssignmentStream;

@@ -17,8 +17,11 @@ $course_id= $_GET("course_id");
 $announcements = [];
 
 
-$sql = $connection->prepare("SELECT announcements.announcement_id,users.username,announcements.content,announcements.title,
-                                    announcements.date FROM users JOIN announcements on users.user_id = announcements.instructor_id");
+$sql = $connection->prepare("SELECT announcements.announcement_id, users.username, announcements.content,
+                                    announcements.title, announcements.date
+                                    FROM users
+                                    JOIN announcements ON users.user_id = announcements.instructor_id
+                                    ORDER BY announcements.date DESC;");
 
 if ($sql->execute()) {
     $result = $sql->get_result();
