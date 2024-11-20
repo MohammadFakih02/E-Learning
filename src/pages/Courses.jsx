@@ -47,8 +47,18 @@ const Courses = () => {
 
   return (
     <div>
-      <CourseList url="/viewMyCourses" courses={myCourses} onEnroll={null} onClick={handleCourseClick}/>
-      <CourseList url="/viewCourses" courses={allCourses} onEnroll={handleEnroll} />
+      <CourseList
+        url="/viewMyCourses"
+        courses={myCourses}
+        onEnroll={null}
+        onClick={handleCourseClick}
+      />
+      <CourseList
+        url="/viewCourses"
+        courses={allCourses}
+        onEnroll={handleEnroll}
+        onClick={null}
+      />
     </div>
   );
 };

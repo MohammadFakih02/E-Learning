@@ -11,7 +11,18 @@ if (!isset($userData['role'])) {
 $user_id=$userData["user_id"];
 $courses = [];
 
-$sql = $connection->prepare("Select courses.course_id,courses.course_name from courses join user_courses on user_courses.course_id = courses.course_id where user_courses.user_id!=?");
+$sql = $connection->prepare("SELECT 
+    courses.course_id, 
+    courses.course_name
+FROM 
+    courses 
+LEFT JOIN 
+    user_courses 
+ON 
+    courses.course_id = user_courses.course_id 
+    AND user_courses.user_id = ?
+WHERE 
+    user_courses.course_id IS NULL;");
 $sql->bind_param("i", $user_id);
 if($sql->execute()){
     $result = $sql->get_result();
