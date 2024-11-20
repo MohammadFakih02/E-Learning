@@ -7,11 +7,11 @@ const assignmentStream = () => {
   getassignments = async () => {
     try {
       const result = await requestApi({
-        route: `/viewAssignmentsStream?course_id=${course_id}`,
+        route: `/viewAssignmentsStream.php?course_id=${course_id}`,
       });
-      setAssignments(data);
+      setAssignments(result.data);
     } catch(error) {
-      console.log(error);
+      console.log(error.response.data.message);
     }
   };
 

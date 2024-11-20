@@ -42,7 +42,7 @@ const Register = () => {
                 password,
               },
               method: requestMethods.POST,
-              route: "/register",
+              route: "/register.php",
             });
             navigate("/");
             setErrormessage("");

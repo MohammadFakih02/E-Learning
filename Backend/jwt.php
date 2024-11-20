@@ -47,22 +47,26 @@ class JwtManager
     public function checkToken()
     {
         $headers = getallheaders();
+        
         $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
-
+    
         if (!$authHeader) {
             http_response_code(401);
             echo json_encode(["error" => "Authorization header missing"]);
             exit;
         }
-
+    
         $token = $authHeader;
-
+    
         $userData = $this->decodeToken($token);
         if (!$userData) {
             http_response_code(400);
             echo json_encode(["error" => "Malformed token"]);
             exit;
         }
+    
         return $userData;
     }
+    
+
 }

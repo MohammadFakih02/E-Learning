@@ -10,16 +10,16 @@ if (!isset($userData['role']) || $userData['role'] !== 'student') {
     exit;
 }
 
-if(isset($_GET["course_id"])&& isset($_GET['user_id'])){
-    $user_id = $_GET["user_id"];
+if(isset($_GET["course_id"])){
+    $user_id = $userData["user_id"];
     $course_id=$_GET["course_id"];
     $sql = $connection->prepare("INSERT INTO user_courses (user_id,course_id) values (?,?)");
     $sql->bind_param("ii", $user_id, $course_id);
     if($sql->execute()){
-        echo json_encode(["message"=> "enrolled into course"]);
+        echo json_encode(["data"=> "enrolled into course"]);
     }else{
         http_response_code(500);
-        echo json_encode(["error"=> "Could not assign instructor"]);
+        echo json_encode(["error"=> "Could not enroll"]);
     }
 }else{
     http_response_code(400);

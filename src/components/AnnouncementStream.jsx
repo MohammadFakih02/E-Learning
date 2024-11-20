@@ -7,11 +7,11 @@ const AnnouncementStream = () => {
   getAnnouncements = async () => {
     try {
       const result = await requestApi({
-        route: `/viewAnnouncementsStream?course_id=${course_id}`,
+        route: `/viewAnnouncementsStream.php?course_id=${course_id}`,
       });
-      setAnnouncements(data);
+      setAnnouncements(result.data);
     } catch(error) {
-      console.log(error);
+      console.log(error.response.data.message);
     }
   };
 

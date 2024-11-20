@@ -6,3 +6,5 @@ const CourseCard = (coursename, { button }) => {
     </div>
   );
 };
+
+export default CourseCard;

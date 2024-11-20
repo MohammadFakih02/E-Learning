@@ -5,7 +5,7 @@ axios.defaults.baseURL = "http://localhost/elearning/backend";
 export const requestApi = async ({ route, method = "GET", body }) => {
   try {
     const response = await axios.request({
-      url: `${route}.php`,
+      url: `${route}`,
       method,
       data: body,
       headers: {

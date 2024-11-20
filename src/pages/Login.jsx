@@ -35,9 +35,9 @@ const Login = () => {
                 password,
               },
               method: requestMethods.POST,
-              route: "/login",
+              route: "/login.php",
             });
-
+            localStorage.setItem("token", result.token);
             const decoded = jwtDecode(result.token);
             const role = decoded.role;
             console.log(role);
@@ -46,7 +46,7 @@ const Login = () => {
             } else if (role === "instructor") {
               navigate("/instructor");
             } else {
-              navigate("/student");
+              navigate("/Courses");
             }
 
             setErrormessage("");
