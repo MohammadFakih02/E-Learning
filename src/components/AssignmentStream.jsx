@@ -1,9 +1,11 @@
 import { requestApi } from "../utils/request";
 import { useState,useEffect } from "react";
+import Button from "./Button";
+import { useNavigate } from "react-router-dom";
 
 const AssignmentStream = ({course_id}) => {
     const [assignments,setAssignments] = useState([]);
-    
+    const navigate = useNavigate();
   const getAssignments = async () => {
     try {
       const result = await requestApi({
@@ -29,6 +31,7 @@ const AssignmentStream = ({course_id}) => {
                 </div>
                 <h3>from {assignment.username}</h3>
                 <h2>due {assignment.deadline}</h2>
+                <Button text="checkdetails" onClick={()=>{navigate(`/assignment/${assignment.assignment_id}`)}}/>
             </div>
         ))}
     </div>
