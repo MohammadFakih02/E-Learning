@@ -10,12 +10,14 @@ if (!isset($userData['role']) || $userData['role'] !== 'admin') {
     exit;
 }
 
-if (!isset($_POST["user_id"]) || empty($_POST["user_id"])) {
+$input = json_decode(file_get_contents("php://input"), true);
+if (!isset($input["user_id"]) || empty($input["user_id"])) {
+    http_response_code(400);
     echo json_encode(["success" => false, "message" => "User ID is required."]);
-    exit();
+    exit;
 }
+$user_id = $input["user_id"];
 
-$user_id = $_POST['user_id'];
 
 $sql = $connection->prepare('
     UPDATE users

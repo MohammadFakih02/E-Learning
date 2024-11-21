@@ -10,10 +10,9 @@ if (!isset($userData['role']) || $userData['role'] !== 'admin') {
     exit;
 }
 
-
 $data = json_decode(file_get_contents("php://input"), true);
 
-if(isset($data["course_name"])){
+if (isset($data["course_name"])) {
     $course_name = $data["course_name"];
 
     $checkSql = $connection->prepare("SELECT COUNT(*) FROM courses WHERE course_name = ?");
@@ -29,16 +28,17 @@ if(isset($data["course_name"])){
         exit;
     }
     
-    $course_name = $data["course_name"];
-    $sql= $connection->prepare("INSERT INTO courses (course_name) values (?)");
+    $sql = $connection->prepare("INSERT INTO courses (course_name) VALUES (?)");
     $sql->bind_param("s", $course_name);
     if ($sql->execute()) {
-        echo json_encode(["message"=> "added new course"]);
+        $course_id = $sql->insert_id;
+
+        echo json_encode(["message" => "Added new course", "data" => ["course_id" => $course_id]]);
     } else {
         http_response_code(500);
-        echo json_encode(["error"=> "Unable to create course"]);
+        echo json_encode(["error" => "Unable to create course"]);
     }
-}else{
+} else {
     http_response_code(400);
-    echo json_encode(["error"=> "invalid input"]);
+    echo json_encode(["error" => "Invalid input"]);
 }
