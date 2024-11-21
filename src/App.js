@@ -6,6 +6,7 @@ import { BrowserRouter ,Routes, Route } from "react-router-dom";
 import Streams from './pages/Streams';
 import Assignment from './pages/Assignment';
 import Admin from './pages/Admin'
+import Instructor from './pages/Instructor';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/streams/:courseId" element={<Streams />} />
         <Route path="/assignment/:assignment_id" element={<Assignment />}/>
         <Route path='/admin' element={<Admin />} />
+        <Route path='/instructor' element={<Instructor/>}/>
       </Routes>
       </BrowserRouter>
     </div>

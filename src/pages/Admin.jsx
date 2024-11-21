@@ -18,7 +18,7 @@ const Admin = () => {
     course_name: "",
   });
 
-  const [selectedCourses, setSelectedCourses] = useState([]); // To track selected courses
+  const [selectedCourses, setSelectedCourses] = useState([]);
 
   const getAdminView = async () => {
     try {
@@ -127,29 +127,25 @@ const Admin = () => {
   };
 
   const handleAddInstructor = async (e) => {
-    e.preventDefault(); // Ensure we prevent default form submission
-
-    console.log("Creating instructor with data:", newInstructor, selectedCourses); // Log the data being submitted
-
+    e.preventDefault();
     try {
       const response = await requestApi({
         route: "/admin/createInstructor.php",
         method: requestMethods.POST,
         body: {
           ...newInstructor,
-          course_ids: selectedCourses, // Pass selected courses here
+          course_ids: selectedCourses,
         },
       });
 
-      console.log("Instructor created successfully:", response); // Log the response from API
+      console.log("Instructor created successfully:", response);
 
       if (response.message) {
-        // Check if response.data contains user_id
         if (response.data && response.data.user_id) {
           setInstructors((prev) => [
             ...prev,
             {
-              user_id: response.data.user_id,  // Use the user_id from the response
+              user_id: response.data.user_id,
               username: newInstructor.username,
               role: newInstructor.role,
               is_banned: "0",
@@ -162,7 +158,7 @@ const Admin = () => {
             password: "",
             role: "instructor",
           });
-          setSelectedCourses([]); // Reset the selected courses
+          setSelectedCourses([]);
         } else {
           console.error('User ID is missing in the response');
         }
@@ -285,7 +281,6 @@ const Admin = () => {
         </tbody>
       </table>
 
-      {/* Add Instructor Form */}
       <h2>Add Instructor</h2>
       <form onSubmit={handleAddInstructor}>
         <div>
@@ -319,7 +314,6 @@ const Admin = () => {
           />
         </div>
         
-        {/* Add Course Selection */}
         <div>
           <label>Assign Courses</label>
           <select
@@ -339,7 +333,6 @@ const Admin = () => {
         <button type="submit">Create Instructor</button>
       </form>
 
-      {/* Add Course Form */}
       <h2>Add Course</h2>
       <form
         onSubmit={(e) => {
