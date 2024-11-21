@@ -10,6 +10,13 @@ const Instructor = () => {
         title: "",
         content: "",
       });
+      const [assignment, setAssignment] = useState({
+        course_id: 0,
+        title: "",
+        content: "",
+        deadline: "",
+    });
+    
   const [students, setStudents] = useState([]);
 
   const getStudents = async () => {
@@ -42,6 +49,43 @@ const Instructor = () => {
     }
   };
   
+  const isValidDate = (dateString) => {
+    const date = new Date(dateString);
+    return !isNaN(date.getTime()); // Returns true if valid, false otherwise
+};
+
+const createAssignment = async () => {
+    const { course_id, title, content, deadline } = assignment;
+
+    if (!isValidDate(deadline)) {
+        console.error("Invalid deadline date");
+        return;
+    }
+
+    try {
+        const result = await requestApi({
+            route: "/instructor/createAssignment.php",
+            method: requestMethods.POST,
+            body: { 
+                course_id: parseInt(course_id), 
+                title, 
+                content, 
+                deadline 
+            },
+        });
+
+        console.log("Assignment created:", { course_id, title, content, deadline });
+        setAssignment({
+            course_id: 0,
+            title: "",
+            content: "",
+            deadline: "",
+        });
+    } catch (error) {
+        console.error("Error creating assignment:", error.response ? error.response.data : error);
+    }
+};
+ 
 
   useEffect(() => {
     getStudents();
@@ -107,6 +151,32 @@ const Instructor = () => {
         />
         <Button text={"Create Announcement"} onClick={createAnnouncement} />
       </div>
+      <div>
+    <h2>Create Assignment</h2>
+    <Input
+        placeholder={"Course ID"}
+        value={assignment.course_id}
+        onChange={(e) => setAssignment({ ...assignment, course_id: e.target.value })}
+    />
+    <Input
+        placeholder={"Title"}
+        value={assignment.title}
+        onChange={(e) => setAssignment({ ...assignment, title: e.target.value })}
+    />
+    <Input
+        placeholder={"Content"}
+        value={assignment.content}
+        onChange={(e) => setAssignment({ ...assignment, content: e.target.value })}
+    />
+    <input
+        type="date"
+        placeholder="Deadline"
+        value={assignment.deadline}
+        onChange={(e) => setAssignment({ ...assignment, deadline: e.target.value })}
+    />
+    <Button text={"Create Assignment"} onClick={createAssignment} />
+</div>
+
     </>
   );
 };
