@@ -1,69 +1,59 @@
 <?php
 
-include("../connection.php");
-
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+include ("../connection.php");
 
 $userData = $jwtManager->checkToken();
-if (!isset($userData['role']) || $userData['role'] !== 'student') {
+
+if (!isset($userData['role']) || $userData['role'] !== 'instructor') {
     http_response_code(403);
-    echo json_encode(["error" => "Access denied: Students only"]);
+    echo json_encode(["error" => "Access denied: Instructors only"]);
     exit;
 }
 
-$assignment_id = $_GET["ass"];
-$fileName = null;
-$filePath = null;
-if (isset($_FILES['file'])) {
-    var_dump($_FILES); // Check the file details received from the frontend
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'No file uploaded']);
+if (!isset($_GET['assignment_id']) || empty($_GET['assignment_id'])) {
+    http_response_code(400);
+    echo json_encode(["error" => "Missing or invalid assignment ID"]);
     exit;
 }
 
-if (isset($_FILES['file'])) {
-    if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-        echo json_encode(['status' => 'error', 'message' => 'File upload error: ' . $_FILES['file']['error']]);
-        exit;
-    }
-
-    $uploadDir = '../uploads/';
-    if (!is_dir($uploadDir)) {
-        echo json_encode(['status' => 'error', 'message' => 'Upload directory does not exist.']);
-        exit;
-    }
-
-    $fileTmpPath = $_FILES['file']['tmp_name'];
-    $fileName = basename($_FILES['file']['name']);
-    $filePath = $uploadDir . $fileName;
-
-    if (!move_uploaded_file($fileTmpPath, $filePath)) {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to move uploaded file to: ' . $filePath]);
-        exit;
-    }
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'No file uploaded.']);
-    exit;
-}
-
-$content = $_POST['content'] ?? '';
-$userId = $userData['user_id']; 
+$assignmentId = $_GET['assignment_id'];
 
 $sql = $connection->prepare("
-    REPLACE INTO submissions (student_id, file_name, file_path, content, assignment_id)
-    VALUES (?, ?, ?, ?, ?)
+    SELECT 
+        submissions.id AS submission_id,
+        submissions.user_id,
+        submissions.file_name,
+        submissions.file_path,
+        submissions.content,
+        submissions.created_at,
+        users.name AS student_name
+    FROM 
+        submissions
+    INNER JOIN 
+        users ON submissions.user_id = users.id
+    WHERE 
+        submissions.assignment_id = ?
+    ORDER BY 
+        submissions.created_at DESC
 ");
-$sql->bind_param("isssi", $userId, $fileName, $filePath, $content, $assignment_id);
 
+$sql->bind_param("i", $assignmentId);
 if ($sql->execute()) {
-    echo json_encode(['status' => 'success', 'message' => 'Submission saved successfully.']);
-    $sql->close();
+    $result = $sql->get_result(); 
+
+    $submissions = [];
+    while ($row = $result->fetch_assoc()) {
+        $submissions[] = $row;
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'submissions' => $submissions
+    ]);
 } else {
     http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Database error']);
+    echo json_encode(['error' => 'Database error']);
 }
+
 
 $connection->close();

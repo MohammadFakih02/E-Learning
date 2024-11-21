@@ -13,7 +13,7 @@ if (!isset($userData['role']) || $userData['role'] !== 'instructor') {
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (isset($data["course_id"]) && isset($data["content"]) && isset($data["title"]) && isset($userData["user_id"])) {
-    $date = date('m/d/Y h:i:s a', time());
+    $date = date('Y-m-d');
     $course_id = $data["course_id"];
     $content = $data["content"];
     $title  = $data["title"];
